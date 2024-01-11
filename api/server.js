@@ -5,7 +5,7 @@ const travelRoutes = require('./routes/travel/travelRoute');
 const momentRoutes = require('./routes/travel/momentRoute');
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 // Middleware pour parser les requêtes JSON
 app.use(bodyParser.json());
