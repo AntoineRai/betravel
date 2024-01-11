@@ -35,4 +35,19 @@ router.post('/users', (req, res) => {
   });
 });
 
+// Route pour récupérer tous les voyages d'un utilisateur
+router.get('/users/:userId/travel', (req, res) => {
+  const { userId } = req.params;
+  const sql = 'SELECT * FROM Travel WHERE userId = ?';
+
+  db.query(sql, [userId], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des voyages de l\'utilisateur:', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
 module.exports = router;
