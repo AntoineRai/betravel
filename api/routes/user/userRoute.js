@@ -181,15 +181,29 @@ router.post('/users/friends', async (req, res) => {
   }
 });
 
-// Route pour récupérer le profil d'un utilisateur
-router.get('/users/:userId', (req, res) => {
+// Route pour récupérer le profil d'un utilisateur grâce à son Id
+router.get('/users/id/:userId', (req, res) => {
   const { userId } = req.params;
-  console.log(userId);
   const sql = 'SELECT Users.idUser, Users.name, Users.email, Users.friendcode FROM Users WHERE idUser = ?';
 
   db.query(sql, [userId], (err, result) => {
     if (err) {
-      console.error('Erreur lors de la récupération du profil de l\'utilisateur:', err);
+      console.error('Erreur lors de la récupération du profil de l\'utilisateur par ID:', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+// Route pour récupérer le profil d'un utilisateur grâce à son email
+router.get('/users/email/:email', (req, res) => {
+  const { email } = req.params;
+  const sql = 'SELECT Users.idUser, Users.name, Users.email, Users.friendcode FROM Users WHERE email = ?';
+
+  db.query(sql, [email], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération du profil de l\'utilisateur par email:', err);
       res.status(500).json({ error: 'Erreur serveur' });
     } else {
       res.json(result);
