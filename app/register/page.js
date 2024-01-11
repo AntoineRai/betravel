@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
+import Cookie from "js-cookie";
 
 export default function Home() {
   const [user, setUser] = useState({
@@ -34,11 +35,29 @@ export default function Home() {
       return;
     }
     axios.post("http://localhost:3001/api/users", user).then((res) => {
-      console.log(res);
       if (res.status === 200) {
         setUser({ name: "", email: "", password: "" });
         setConfirmPassword("");
         setStatusMessage("Inscription réussie !");
+        axios
+          .post("http://localhost:3001/api/login", {
+            email: user.email,
+            password: user.password,
+          })
+          .then((res) => {
+            if (res.status === 200) {
+              setUser({ email: "", password: "" });
+              setStatusMessage("Inscription et connexion réussie !");
+              Cookie.set("token", res.data.token);
+              setTimeout(() => {
+                window.location.href = "/travel";
+              }, 2000);
+            } else {
+              setStatusMessage(
+                "Inscription réussie mais erreur lors de la connexion"
+              );
+            }
+          });
       } else {
         setUser({ name: "", email: "", password: "" });
         setConfirmPassword("");

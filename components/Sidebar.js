@@ -1,6 +1,13 @@
 import Link from "next/link";
+import Cookie from "js-cookie";
 
 const Sidebar = () => {
+
+  const handleLogout = () => {
+    Cookie.remove("token");
+    window.location.href = "/login";
+  }
+
   return (
     <>
       {/* Barre latérale */}
@@ -46,7 +53,7 @@ const Sidebar = () => {
               <h1 className="text-center text-lg">Feed</h1>
             </div>
           </Link>
-          <div className="w-full h-full flex justify-center items-end pb-4">
+          <div className="w-full h-full flex justify-center items-end pb-4" onClick={handleLogout}>
             <h1 className="text-center text-sm w-4/6 py-4 bg-secondary rounded-full hover:bg-white hover:text-primary transition-all duration-300 ease-in-out">X</h1>
           </div>
         </div>

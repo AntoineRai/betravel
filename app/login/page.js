@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import axios from "axios";
+import Cookie from "js-cookie"
 
 export default function Home() {
   const [user, setUser] = useState({
@@ -27,10 +28,15 @@ export default function Home() {
       return;
     }
     axios.post("http://localhost:3001/api/login", user).then((res) => {
-      console.log(res);
       if (res.status === 200) {
+        setUser({ email: "", password: "" });
         setStatusMessage("Connexion réussie !");
+        Cookie.set("token", res.data.token);
+        setTimeout(() => {
+          window.location.href = "/travel";
+        }, 2000);
       } else {
+        setUser({ email: "", password: "" });
         setStatusMessage("Erreur lors de la connexion");
       }
     });
@@ -73,7 +79,8 @@ export default function Home() {
                 id="email"
                 name="email"
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="email"
+                placeholder="Email"
+                value={user.email}
                 onChange={(e) => setUser({ ...user, email: e.target.value })}
               />
             </div>
@@ -90,6 +97,7 @@ export default function Home() {
                 name="password"
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Mot de passe"
+                value={user.password}
                 onChange={(e) => setUser({ ...user, password: e.target.value })}
               />
             </div>
