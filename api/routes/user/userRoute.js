@@ -18,12 +18,42 @@ router.get('/users', (req, res) => {
   });
 });
 
-// Route pour ajouter un utilisateur avec hachage de mot de passe
+// Fonction pour générer un friendcode aléatoire
+function generateRandomFriendCode() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let friendcode = '';
+
+  for (let i = 0; i < 6; i++) {
+    friendcode += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+
+  return friendcode;
+}
+
+// Fonction pour vérifier si un friendcode existe déjà dans la base de données
+async function isFriendCodeUnique(friendcode) {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT COUNT(*) AS count FROM Users WHERE friendcode = ?';
+    db.query(sql, [friendcode], (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result[0].count === 0);
+      }
+    });
+  });
+}
+
+// Route pour ajouter un utilisateur avec hachage de mot de passe et friendcode aléatoire
 router.post('/users', async (req, res) => {
-  const { name, email, password, friendcode } = req.body;
-  
+  const { name, email, password } = req.body;
+
   try {
-    // Hasher le mot de passe avec Bcrypt
+    let friendcode;
+    do {
+      friendcode = generateRandomFriendCode();
+    } while (!(await isFriendCodeUnique(friendcode)));
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const sql = 'INSERT INTO Users (name, email, password, friendcode) VALUES (?, ?, ?, ?)';
@@ -32,7 +62,7 @@ router.post('/users', async (req, res) => {
         console.error('Erreur lors de l\'ajout de l\'utilisateur:', err);
         res.status(500).json({ error: 'Erreur serveur' });
       } else {
-        res.json({ message: 'Utilisateur ajouté avec succès' });
+        res.json({ message: 'Utilisateur ajouté avec succès', friendcode });
       }
     });
   } catch (error) {
@@ -74,7 +104,7 @@ router.post('/login', async (req, res) => {
 
           if (isPasswordValid) {
             // Générer un token JWT pour l'utilisateur
-            const token = jwt.sign({ userId: result[0].id }, 'secretKey', { expiresIn: '1h' });
+            const token = jwt.sign({ userId: result[0].id }, 'AZD21431DSQSDFGHJKD12D1DFQ', { expiresIn: '1h' });
             res.json({ token });
           } else {
             res.status(401).json({ error: 'Mot de passe incorrect' });
