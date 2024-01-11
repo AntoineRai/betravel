@@ -181,4 +181,21 @@ router.post('/users/friends', async (req, res) => {
   }
 });
 
+// Route pour récupérer le profil d'un utilisateur
+router.get('/users/:userId', (req, res) => {
+  const { userId } = req.params;
+  console.log(userId);
+  const sql = 'SELECT Users.idUser, Users.name, Users.email, Users.friendcode FROM Users WHERE idUser = ?';
+
+  db.query(sql, [userId], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération du profil de l\'utilisateur:', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+
 module.exports = router;
