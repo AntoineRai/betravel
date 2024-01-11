@@ -6,7 +6,7 @@ export default function Home() {
       <div className="w-1/2 min-h-screen flex flex-col justify-center items-center bg-primary text-white font-bold text-3xl">
         <h1>
           Be{" "}
-          <span className="bg-white text-primary p-4 rounded-md">Travel</span>
+          <span className="bg-white text-primary px-2 py-4 rounded-md">Travel</span>
         </h1>
       </div>
       <div className="w-1/2 flex flex-col">
