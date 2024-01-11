@@ -120,4 +120,65 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Route pour récupérer les amis d'un utilisateur
+router.get('/users/:userId/friends', (req, res) => {
+  const { userId } = req.params;
+  console.log(userId);
+  const sql = 'SELECT Users.idUser, Users.name, Users.email, Users.friendcode FROM Friends ' +
+              'INNER JOIN Users ON Friends.userId2 = Users.idUser ' +
+              'WHERE Friends.userId1 = ?';
+
+  db.query(sql, [userId], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des amis de l\'utilisateur:', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+// Fonction pour vérifier si les amis sont déjà enregistrés
+async function areFriendsAlreadyAdded(userId1, userId2) {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT COUNT(*) AS count FROM Friends ' +
+                'WHERE (userId1 = ? AND userId2 = ?)'
+    db.query(sql, [userId1, userId2, userId1, userId2], (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result[0].count > 0);
+      }
+    });
+  });
+} 
+
+// Route pour ajouter deux amis
+router.post('/users/friends', async (req, res) => {
+  const { userId1, userId2 } = req.body;
+
+  try {
+    // Vérifier que les amis ne sont pas déjà enregistrés
+    const isAlreadyFriends = await areFriendsAlreadyAdded(userId1, userId2);
+
+    if (!isAlreadyFriends) {
+      // Enregistrer les amis dans la table Friends
+      const sql = 'INSERT INTO Friends (userId1, userId2) VALUES (?, ?)';
+      db.query(sql, [userId1, userId2], (err, result) => {
+        if (err) {
+          console.error('Erreur lors de l\'ajout des amis:', err);
+          res.status(500).json({ error: 'Erreur serveur' });
+        } else {
+          res.json({ message: 'Amis ajoutés avec succès' });
+        }
+      });
+    } else {
+      res.status(400).json({ error: 'Ces amis sont déjà enregistrés' });
+    }
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout des amis:', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 module.exports = router;
