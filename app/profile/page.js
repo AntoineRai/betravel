@@ -14,22 +14,22 @@ export default function Home() {
           </div>
           {/* Menu */}
           <div className="h-5/6 w-full flex flex-col justify-start pt-4 gap-12 items-center text-white font-bold">
-            <Link href="/travel" className="w-4/6 py-4 bg-secondary  rounded-lg hover:bg-white hover:text-primary transition-all duration-300 ease-in-out">
+            <Link href="/travel" className="w-4/6 py-4 bg-secondary  rounded-full hover:bg-white hover:text-primary transition-all duration-300 ease-in-out">
             <div>
               <h1 className="text-center text-lg">Voyages</h1>
             </div>
             </Link>
-            <Link href="/profile" className="w-4/6 py-4 bg-white text-primary rounded-lg hover:bg-white hover:text-primary transition-all duration-300 ease-in-out">
+            <Link href="/profile" className="w-4/6 py-4 bg-white text-primary rounded-full hover:bg-white hover:text-primary transition-all duration-300 ease-in-out">
             <div >
               <h1 className="text-center text-lg">Profil</h1>
             </div>
             </Link>
-            <Link href="/friends" className="w-4/6 py-4 bg-secondary  rounded-lg hover:bg-white hover:text-primary transition-all duration-300 ease-in-out">
+            <Link href="/friends" className="w-4/6 py-4 bg-secondary  rounded-full hover:bg-white hover:text-primary transition-all duration-300 ease-in-out">
             <div>
               <h1 className="text-center text-lg">Amis</h1>
             </div>
             </Link>
-            <Link href="/feed" className="w-4/6 py-4 bg-secondary  rounded-lg hover:bg-white hover:text-primary transition-all duration-300 ease-in-out">
+            <Link href="/feed" className="w-4/6 py-4 bg-secondary  rounded-full hover:bg-white hover:text-primary transition-all duration-300 ease-in-out">
             <div>
               <h1 className="text-center text-lg">Feed</h1>
             </div>
