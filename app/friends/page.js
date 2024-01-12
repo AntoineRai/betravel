@@ -17,7 +17,12 @@ export default function Home() {
           Amis
         </div>
         {/* Contenu */}
-        <div></div>
+        <div className="h-5/6 w-full">
+          {/* Search Bar */}
+          <div></div>
+          {/* Liste des amis */}
+          <div></div>
+        </div>
       </div>
     </main>
   );
