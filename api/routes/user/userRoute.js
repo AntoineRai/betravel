@@ -163,8 +163,8 @@ router.post('/login', async (req, res) => {
 
           if (isPasswordValid) {
             // Générer un token JWT pour l'utilisateur
-            const token = jwt.sign({ userId: result[0].id }, 'AZD21431DSQSDFGHJKD12D1DFQ', { expiresIn: '1h' });
-            res.json({ token });
+            const token = jwt.sign({ userId: result[0].idUser }, 'AZD21431DSQSDFGHJKD12D1DFQ', { expiresIn: '1h' });
+            res.json({ idUser : result[0].idUser, token : token });
           } else {
             res.status(401).json({ error: 'Mot de passe incorrect' });
           }
