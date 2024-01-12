@@ -145,6 +145,21 @@ router.get('/users/:userId/travel', (req, res) => {
   });
 });
 
+// Route pour récupérer le dernier voyage d'un utilisateur
+router.get('/users/:userId/lastTravel', (req, res) => {
+  const { userId } = req.params;
+  const sql = 'SELECT * FROM Travel WHERE userId = ? ORDER BY startDate DESC LIMIT 1';
+
+  db.query(sql, [userId], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des voyages de l\'utilisateur:', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
 // Route de connexion (login)
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
