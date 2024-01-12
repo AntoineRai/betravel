@@ -166,10 +166,10 @@ router.post('/login', async (req, res) => {
             const token = jwt.sign({ userId: result[0].idUser }, 'AZD21431DSQSDFGHJKD12D1DFQ', { expiresIn: '1h' });
             res.json({ idUser : result[0].idUser, token : token });
           } else {
-            res.status(401).json({ error: 'Mot de passe incorrect' });
+            res.status(500).json({ error: 'Mot de passe incorrect' });
           }
         } else {
-          res.status(404).json({ error: 'Utilisateur non trouvé' });
+          res.status(500).json({ error: 'Utilisateur non trouvé' });
         }
       }
     });
