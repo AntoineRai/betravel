@@ -400,6 +400,11 @@ router.get("/users/:userId/friends/lastTravel", async (req, res) => {
       // Extraire les ID des amis
       const friendIds = friendsResult.map((friend) => friend.userId2);
 
+      // Vérifier si il a bien des amis
+      if (friendIds.length === 0) {
+        return res.json([]);
+      }
+
       // Récupérer les noms des amis
       const usernamesSql = "SELECT idUser, name FROM Users WHERE idUser IN (?)";
       db.query(usernamesSql, [friendIds], (usernamesErr, usernamesResult) => {
@@ -447,5 +452,6 @@ router.get("/users/:userId/friends/lastTravel", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+
 
 module.exports = router;
