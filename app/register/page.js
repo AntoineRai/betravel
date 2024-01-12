@@ -47,6 +47,7 @@ export default function Home() {
           .then((res) => {
             if (res.status === 200) {
               localStorage.setItem('user_mail', user.email);
+              localStorage.setItem('userId', res.data.idUser);
               setUser({ email: "", password: "" });
               setStatusMessage("Inscription et connexion réussie !");
               Cookie.set("token", res.data.token);

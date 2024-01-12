@@ -30,6 +30,7 @@ export default function Home() {
     axios.post("http://localhost:3001/api/login", user).then((res) => {
       if (res.status === 200) {
         localStorage.setItem('user_mail', user.email);
+        localStorage.setItem('userId', res.data.idUser);
         setUser({ email: "", password: "" });
         setStatusMessage("Connexion réussie !");
         Cookie.set("token", res.data.token);

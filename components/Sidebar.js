@@ -5,6 +5,7 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user_mail");
+    localStorage.removeItem("userId");
     Cookie.remove("token");
     window.location.href = "/login";
   }

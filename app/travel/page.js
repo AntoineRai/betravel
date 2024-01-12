@@ -9,11 +9,13 @@ import PopupVoyage from "@/components/PopupVoyage";
 export default function Home() {
   const [travels, setTravels] = useState([]);
   const [trigger, setTrigger] = useState(false);
+  const userId = localStorage.userId;
   const [travel, setTravel] = useState({
     city: "",
     startDate: "",
     endDate: "",
     commentary: "",
+    userId: userId,
   });
 
   if (!Cookie.get("token")) {
@@ -23,6 +25,25 @@ export default function Home() {
   const handleOpenPopUp = () => {
     setTrigger(true);
   };
+
+  const handleAddTravel = () => {
+    axios
+      .post(`http://localhost:3001/api/travel/`, travel)
+      .then((res) => {
+        if (res.status === 200) {
+          setTrigger(false);
+          setTravel({
+            city: "",
+            startDate: "",
+            endDate: "",
+            commentary: "",
+            userId: userId,
+          });
+        } else {
+          console.error("Erreur lors de l'ajout du voyage:", res);
+        }
+      });
+  }
 
   useEffect(() => {
 
@@ -34,7 +55,7 @@ export default function Home() {
         console.error("Erreur lors de la récupération des voyages:", res);
       }
     });
-  }, []);
+  }, [handleAddTravel]);
 
   return (
     <main className="flex min-h-screen min-w-screen">
@@ -149,7 +170,7 @@ export default function Home() {
               </form>
             </div>
             <div className="w-full h-1/5 flex justify-center items-center">
-              <button className="w-4/5 bg-primary text-white font-bold py-2 px-12 rounded focus:outline-none focus:shadow-outline">
+              <button onClick={handleAddTravel} className="w-4/5 bg-primary text-white font-bold py-2 px-12 rounded focus:outline-none focus:shadow-outline">
                 Enregistrer un voyage
               </button>
             </div>
