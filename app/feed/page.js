@@ -37,17 +37,18 @@ export default function Home() {
           Feed
         </div>
         {/* Content */}
-        <div>
+        <div className="h-5/6 flex flex-col items-center justify-around">
           {/* Display friends' last travels */}
           {friendsLastTravels.map((friendTravel, index) => (
-            <div key={index}>
+            <div key={index} className="p-4 w-5/6 bg-primary rounded-xl text-white font-bold flex flex-col justify-center">
+              <div>
               <p>Dernier voyage de {friendTravel.username}:</p>
               <p>{friendTravel.travel.city}</p>
               {/* Convert timestamp to formatted date */}
               <p>
                 {new Date(friendTravel.travel.startDate).toLocaleDateString()}
               </p>
-              <br></br>
+              </div>
             </div>
           ))}
         </div>
