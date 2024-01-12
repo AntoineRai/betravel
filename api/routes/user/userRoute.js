@@ -99,6 +99,37 @@ router.post('/users', async (req, res) => {
   });
 });
 
+// Route pour modifier le nom d'utilisateur
+router.put('/users/modify/:userId/', async (req, res) => {
+  const { userId } = req.params;
+  const { newUsername } = req.body;
+
+  // Vérifier si le nouveau nom d'utilisateur est déjà présent
+  const usernameCheckSql = 'SELECT * FROM Users WHERE name = ? AND idUser != ?';
+  db.query(usernameCheckSql, [newUsername, userId], async (usernameCheckErr, usernameCheckResult) => {
+    if (usernameCheckErr) {
+      console.error('Erreur lors de la vérification du nouveau nom d\'utilisateur:', usernameCheckErr);
+      return res.status(500).json({ error: 'Erreur serveur' });
+    }
+
+    if (usernameCheckResult.length > 0) {
+      // Le nouveau nom d'utilisateur est déjà utilisé
+      return res.status(400).json({ error: 'Ce nom d\'utilisateur est déjà enregistré' });
+    }
+
+    // Mettre à jour le nom d'utilisateur
+    const updateUsernameSql = 'UPDATE Users SET name = ? WHERE idUser = ?';
+    db.query(updateUsernameSql, [newUsername, userId], (updateErr, updateResult) => {
+      if (updateErr) {
+        console.error('Erreur lors de la mise à jour du nom d\'utilisateur:', updateErr);
+        return res.status(500).json({ error: 'Erreur serveur' });
+      } else {
+        res.json({ message: 'Nom d\'utilisateur mis à jour avec succès' });
+      }
+    });
+  });
+});
+
 // Route pour récupérer tous les voyages d'un utilisateur
 router.get('/users/:userId/travel', (req, res) => {
   const { userId } = req.params;
