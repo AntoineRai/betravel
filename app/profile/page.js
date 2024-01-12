@@ -12,6 +12,14 @@ export default function Home() {
     email: "",
     friendcode: "",
   });
+  const [lastTravel, setLastTravel] = useState({
+    idTravel: "",
+    city: "",
+    endDate: "",
+    startDate: "",
+    commentary: "",
+    idUser: "",
+  });
   const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
@@ -39,6 +47,23 @@ export default function Home() {
         console.error("API Error:", error);
         setStatusMessage("Erreur lors de la requête API");
       });
+
+    axios
+      .get(`http://localhost:3001/api/users/${localStorage.userId}/lastTravel`)
+      .then((res) => {
+        setLastTravel({
+          idTravel: res.data[0].idTravel,
+          city: res.data[0].city,
+          endDate: res.data[0].endDate,
+          startDate: res.data[0].startDate,
+          commentary: res.data[0].commentary,
+          idUser: localStorage.userId,
+        });
+      })
+      .catch((error) => {
+        console.error("API Error:", error);
+        setStatusMessage("Erreur lors de la requête API");
+      });
   }, []);
 
   if (!Cookie.get("token")) {
@@ -60,8 +85,12 @@ export default function Home() {
               Informations du profil
             </h1>
             <div className="flex flex-col h-4/5 justify-around">
-              <h2 className="p-4"><u>Nom :</u> {user.name}</h2>
-              <h2 className="p-4"><u>Email :</u> {user.email}</h2>
+              <h2 className="p-4">
+                <u>Nom :</u> {user.name}
+              </h2>
+              <h2 className="p-4">
+                <u>Email :</u> {user.email}
+              </h2>
             </div>
           </div>
           <div className="h-2/5 w-5/6 bg-primary rounded-lg text-white font-bold">
@@ -69,7 +98,11 @@ export default function Home() {
               Mon dernier voyage
             </h1>
             <div className="p-4 h-4/5 flex flex-col justify-center items-center">
-              <h2>{user.friendcode}</h2>
+              <h1 className="text-lg">{lastTravel.city}</h1>
+              <h2 className="text-md italic">
+                {lastTravel.startDate} - {lastTravel.endDate}
+              </h2>
+              <p className="text-md">{lastTravel.commentary}</p>
             </div>
           </div>
         </div>
