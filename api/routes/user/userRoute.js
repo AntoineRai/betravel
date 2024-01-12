@@ -48,27 +48,55 @@ async function isFriendCodeUnique(friendcode) {
 router.post('/users', async (req, res) => {
   const { name, email, password } = req.body;
 
-  try {
-    let friendcode;
-    do {
-      friendcode = generateRandomFriendCode();
-    } while (!(await isFriendCodeUnique(friendcode)));
+  // Vérifier si l'email est déjà présent
+  const emailCheckSql = 'SELECT * FROM Users WHERE email = ?';
+  db.query(emailCheckSql, [email], async (emailCheckErr, emailCheckResult) => {
+    if (emailCheckErr) {
+      console.error('Erreur lors de la vérification de l\'email:', emailCheckErr);
+      return res.status(500).json({ error: 'Erreur serveur' });
+    }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    if (emailCheckResult.length > 0) {
+      // L'email est déjà utilisé
+      return res.status(400).json({ error: 'Cet email est déjà enregistré' });
+    }
 
-    const sql = 'INSERT INTO Users (name, email, password, friendcode) VALUES (?, ?, ?, ?)';
-    db.query(sql, [name, email, hashedPassword, friendcode], (err, result) => {
-      if (err) {
-        console.error('Erreur lors de l\'ajout de l\'utilisateur:', err);
+    // Vérifier si le nom d'utilisateur est déjà présent
+    const usernameCheckSql = 'SELECT * FROM Users WHERE name = ?';
+    db.query(usernameCheckSql, [name], async (usernameCheckErr, usernameCheckResult) => {
+      if (usernameCheckErr) {
+        console.error('Erreur lors de la vérification du nom d\'utilisateur:', usernameCheckErr);
+        return res.status(500).json({ error: 'Erreur serveur' });
+      }
+
+      if (usernameCheckResult.length > 0) {
+        // Le nom d'utilisateur est déjà utilisé
+        return res.status(400).json({ error: 'Ce nom d\'utilisateur est déjà enregistré' });
+      }
+
+      try {
+        let friendcode;
+        do {
+          friendcode = generateRandomFriendCode();
+        } while (!(await isFriendCodeUnique(friendcode)));
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const insertSql = 'INSERT INTO Users (name, email, password, friendcode) VALUES (?, ?, ?, ?)';
+        db.query(insertSql, [name, email, hashedPassword, friendcode], (insertErr, insertResult) => {
+          if (insertErr) {
+            console.error('Erreur lors de l\'ajout de l\'utilisateur:', insertErr);
+            return res.status(500).json({ error: 'Erreur serveur' });
+          } else {
+            res.json({ message: 'Utilisateur ajouté avec succès', friendcode });
+          }
+        });
+      } catch (hashError) {
+        console.error('Erreur lors du hachage du mot de passe:', hashError);
         res.status(500).json({ error: 'Erreur serveur' });
-      } else {
-        res.json({ message: 'Utilisateur ajouté avec succès', friendcode });
       }
     });
-  } catch (error) {
-    console.error('Erreur lors du hachage du mot de passe:', error);
-    res.status(500).json({ error: 'Erreur serveur' });
-  }
+  });
 });
 
 // Route pour récupérer tous les voyages d'un utilisateur
