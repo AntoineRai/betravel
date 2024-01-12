@@ -289,26 +289,54 @@ async function areFriendsAlreadyAdded(userId1, userId2) {
 
 // Route pour ajouter deux amis
 router.post("/users/friends", async (req, res) => {
-  const { userId1, userId2 } = req.body;
+  const { userId1, friendCode } = req.body;
+  let userId2 = null;
 
   try {
-    // Vérifier que les amis ne sont pas déjà enregistrés
-    const isAlreadyFriends = await areFriendsAlreadyAdded(userId1, userId2);
+    // Récupérer l'ID de l'ami par le friendcode
+    const retrieveIdsql = "SELECT idUser FROM Users WHERE friendcode = ?";
+    db.query(retrieveIdsql, [friendCode], (err, resId) => {
+      if (err) {
+        console.error(
+          "Erreur lors de la récupération de l'ID d'ami par friendcode:",
+          err
+        );
+        return res.status(500).json({ error: "Erreur serveur" });
+      } else {
+        if (resId.length > 0) {
+          // Extraire l'ID de la réponse
+          userId2 = resId[0].idUser;
 
-    if (!isAlreadyFriends) {
-      // Enregistrer les amis dans la table Friends
-      const sql = "INSERT INTO Friends (userId1, userId2) VALUES (?, ?)";
-      db.query(sql, [userId1, userId2], (err, result) => {
-        if (err) {
-          console.error("Erreur lors de l'ajout des amis:", err);
-          res.status(500).json({ error: "Erreur serveur" });
+          // Vérifier que les amis ne sont pas déjà enregistrés
+          areFriendsAlreadyAdded(userId1, userId2)
+            .then((isAlreadyFriends) => {
+              if (!isAlreadyFriends) {
+                // Enregistrer les amis dans la table Friends
+                const sql =
+                  "INSERT INTO Friends (userId1, userId2) VALUES (?, ?)";
+                db.query(sql, [userId1, userId2], (err, result) => {
+                  if (err) {
+                    console.error("Erreur lors de l'ajout des amis:", err);
+                    res.status(500).json({ error: "Erreur serveur" });
+                  } else {
+                    res.json({ message: "Amis ajoutés avec succès" });
+                  }
+                });
+              } else {
+                res.status(400).json({
+                  error: "Ces amis sont déjà enregistrés",
+                });
+              }
+            })
+            .catch((error) => {
+              console.error("Erreur lors de la vérification des amis:", error);
+              res.status(500).json({ error: "Erreur serveur" });
+            });
         } else {
-          res.json({ message: "Amis ajoutés avec succès" });
+          res.status(404).json({ error: "Aucun utilisateur trouvé avec ce friendcode" });
         }
-      });
-    } else {
-      res.status(400).json({ error: "Ces amis sont déjà enregistrés" });
-    }
+      }
+    });
   } catch (error) {
     console.error("Erreur lors de l'ajout des amis:", error);
     res.status(500).json({ error: "Erreur serveur" });
