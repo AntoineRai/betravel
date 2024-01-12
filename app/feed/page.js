@@ -32,6 +32,7 @@ export default function Home() {
         {/* Contenu */}
         <div className="h-5/6"></div>
       </div>
+
     </main>
   );
 }
