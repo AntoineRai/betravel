@@ -129,6 +129,9 @@ router.put("/users/modify/:userId/", async (req, res) => {
   const { userId } = req.params;
   const { newUsername } = req.body;
 
+  console.log(userId)
+  console.log(newUsername)
+
   // Vérifier si le nouveau nom d'utilisateur est déjà présent
   const usernameCheckSql = "SELECT * FROM Users WHERE name = ? AND idUser != ?";
   db.query(
