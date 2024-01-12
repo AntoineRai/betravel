@@ -66,7 +66,7 @@ export default function Home() {
           </div>
           <div className="h-2/5 w-5/6 bg-primary rounded-lg text-white font-bold">
             <h1 className="p-4 bg-secondary w-full rounded-t-lg">
-              Votre code ami
+              Mon dernier voyage
             </h1>
             <div className="p-4 h-4/5 flex flex-col justify-center items-center">
               <h2>{user.friendcode}</h2>
