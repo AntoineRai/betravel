@@ -59,8 +59,8 @@ export default function Home() {
         setLastTravel({
           idTravel: res.data[0].idTravel,
           city: res.data[0].city,
-          endDate: res.data[0].endDate,
-          startDate: res.data[0].startDate,
+          endDate: new Date(res.data[0].endDate).toLocaleDateString(),
+          startDate: new Date(res.data[0].startDate).toLocaleDateString(),
           commentary: res.data[0].commentary,
           idUser: localStorage.userId,
         });
