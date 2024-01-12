@@ -4,6 +4,7 @@ import Cookie from "js-cookie";
 const Sidebar = () => {
 
   const handleLogout = () => {
+    localStorage.removeItem("user_mail");
     Cookie.remove("token");
     window.location.href = "/login";
   }

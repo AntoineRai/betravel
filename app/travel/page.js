@@ -19,13 +19,14 @@ export default function Home() {
   if (!Cookie.get("token")) {
     window.location.href = "/login";
   }
-  
+
   const handleOpenPopUp = () => {
     setTrigger(true);
-  }
+  };
 
   useEffect(() => {
-    axios.get("http://localhost:3001/api/users/1/travel").then((res) => {
+
+    axios.get(`http://localhost:3001/api/users/${localStorage.userId}/travel`).then((res) => {
       console.log(res.data);
       if (res.status === 200) {
         setTravels(res.data);
@@ -47,7 +48,10 @@ export default function Home() {
         <div className="flex flex-col pt-2 py-2 h-5/6">
           {/* Ajouter un voyage */}
           <div className="h-1/6 flex flex-col items-center justify-center w-full">
-            <button onClick={handleOpenPopUp} className="bg-secondary text-white text-xl p-4 rounded-full text-center font-bold hover:bg-white hover:text-secondary hover:border-2 hover:border-secondary transition-all duration-300 ease-in-out">
+            <button
+              onClick={handleOpenPopUp}
+              className="bg-secondary text-white text-xl p-4 rounded-full text-center font-bold hover:bg-white hover:text-secondary hover:border-2 hover:border-secondary transition-all duration-300 ease-in-out"
+            >
               Ajoutez votre voyage
             </button>
           </div>
